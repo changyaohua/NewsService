@@ -14,6 +14,7 @@ import net.sf.json.JSONArray;
 import com.chang.news.bean.NoticeBean;
 import com.chang.news.biz.NoticeBiz;
 import com.chang.news.biz.NoticeBizImpl;
+import com.chang.news.dao.NoticeDaoImpl;
 
 /**
  * Servlet implementation class HongTaiNoticeServlet
@@ -26,12 +27,21 @@ public class HongTaiNoticeServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		NoticeBiz noticeBiz = new NoticeBizImpl();
-		List<NoticeBean> noticeBeanList = noticeBiz.fetchAllNotice();
-		JSONArray jsonArray = JSONArray.fromObject(noticeBeanList);
-		System.out.println(jsonArray.toString());
-		response.getOutputStream().write(jsonArray.toString().getBytes("UTF-8"));  
-        response.setContentType("text/json; charset=UTF-8");  //JSON的类型为text/json  
+		int pageNo = Integer.parseInt(request.getParameter("pageNo"));
+		if(pageNo == -1){
+			request.getRequestDispatcher("./UpdateFetchNoticeServlet").forward(request, response);
+		} else {
+			NoticeBiz noticeBiz = new NoticeBizImpl();
+			int allNoticeRow = noticeBiz.fetchNoticeRows();
+			int maxPage = allNoticeRow % NoticeDaoImpl.ROWS_PRE_PAGE == 0 ? allNoticeRow / NoticeDaoImpl.ROWS_PRE_PAGE : (allNoticeRow / NoticeDaoImpl.ROWS_PRE_PAGE + 1);
+			if (pageNo <= maxPage) {
+				List<NoticeBean> noticeBeanList = noticeBiz.fetchNoticeByPageNO(pageNo);
+				JSONArray jsonArray = JSONArray.fromObject(noticeBeanList);
+				System.out.println(jsonArray.toString());
+				response.getOutputStream().write(jsonArray.toString().getBytes("UTF-8"));  
+		        response.setContentType("text/json; charset=UTF-8");  //JSON的类型为text/json
+			}
+		}
 	}
 
 	/**

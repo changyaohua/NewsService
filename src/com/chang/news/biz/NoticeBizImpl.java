@@ -32,5 +32,38 @@ public class NoticeBizImpl implements NoticeBiz{
 		}
 		return noticeBeanList;
 	}
+
+	@Override
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo) {
+		List<NoticeBean> noticeBeanList = null;
+		try {
+			noticeBeanList = noticeDao.fetchNoticeByPageNO(pageNo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return noticeBeanList;
+	}
+
+	@Override
+	public int fetchNoticeRows() {
+		int count = 0;
+		try {
+			count  = noticeDao.fetchNoticeRows();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	@Override
+	public NoticeBean fetchFirstNotice() {
+		NoticeBean noticeBean = null;
+		try {
+			noticeBean = noticeDao.fetchFirstNotice();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return noticeBean;
+	}
 	
 }

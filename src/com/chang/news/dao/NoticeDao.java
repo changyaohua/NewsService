@@ -18,4 +18,10 @@ public interface NoticeDao {
 
 	public List<NoticeBean> fetchAllNotice() throws Exception;
 
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo) throws Exception;
+
+	public int fetchNoticeRows() throws Exception;
+
+	public NoticeBean fetchFirstNotice() throws Exception;
+
 }

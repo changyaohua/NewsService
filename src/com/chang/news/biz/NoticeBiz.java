@@ -18,5 +18,11 @@ public interface NoticeBiz {
 	public boolean insertNewsData(List<NoticeBean> noticeList);
 
 	public List<NoticeBean> fetchAllNotice();
+
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo);
+
+	public int fetchNoticeRows();
+
+	public NoticeBean fetchFirstNotice();
 	
 }

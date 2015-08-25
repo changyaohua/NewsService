@@ -18,6 +18,8 @@ public class NoticeDaoImpl implements NoticeDao {
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	
+	public static final int ROWS_PRE_PAGE = 15;
+	
 	@Override
 	public boolean insertNewsData(List<NoticeBean> noticeList) throws Exception {
 		
@@ -66,6 +68,61 @@ public class NoticeDaoImpl implements NoticeDao {
 		}
 		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
 		return noticeBeanList;
+	}
+
+	@Override
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo) throws Exception {
+		List<NoticeBean> noticeBeanList = null;
+		Connection connection = dbUtil.getConnection();
+		String sql = "select * from hongtai_important_notice order by id desc limit ?,?";
+		preparedStatement = connection.prepareStatement(sql);
+		int startIndex = (pageNo - 1) * ROWS_PRE_PAGE;
+		preparedStatement.setInt(1, startIndex);
+		preparedStatement.setInt(2, ROWS_PRE_PAGE);
+		resultSet = preparedStatement.executeQuery();
+		noticeBeanList = new ArrayList<NoticeBean>();
+		NoticeBean noticeBean = null;
+		while(resultSet.next()){
+			noticeBean = new NoticeBean();
+			noticeBean.setTitle(resultSet.getString("title"));
+			noticeBean.setTime(resultSet.getString("time"));
+			noticeBean.setUrl(resultSet.getString("url"));
+			noticeBeanList.add(noticeBean);
+		}
+		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
+		return noticeBeanList;
+	}
+
+	@Override
+	public int fetchNoticeRows() throws Exception {
+		int count = 0;
+		Connection connection = dbUtil.getConnection();
+		String sql = "select count(*) from hongtai_important_notice";
+		preparedStatement = connection.prepareStatement(sql);
+		resultSet = preparedStatement.executeQuery();
+		if(resultSet.next()) {
+			count =resultSet.getInt(1);
+		}
+		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
+		return count;
+	}
+
+	@Override
+	public NoticeBean fetchFirstNotice() throws Exception {
+		NoticeBean noticeBean = null;
+		Connection connection = dbUtil.getConnection();
+		String sql = "select * from hongtai_important_notice order by id desc";
+		preparedStatement = connection.prepareStatement(sql);
+		resultSet = preparedStatement.executeQuery();
+		while(resultSet.next()) {
+			noticeBean = new NoticeBean();
+			noticeBean.setTitle(resultSet.getString("title"));
+			noticeBean.setTime(resultSet.getString("time"));
+			noticeBean.setUrl(resultSet.getString("url"));
+			break;
+		}
+		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
+		return noticeBean;
 	}
 
 }
