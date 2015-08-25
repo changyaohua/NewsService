@@ -28,10 +28,12 @@ import com.chang.news.biz.NoticeBizImpl;
  */
 public class initNewsData {
 	
-	private static String urlPath = "http://xsc.nuc.edu.cn/xwzx/zytz.htm";
-	private String urlNextPath = "http://xsc.nuc.edu.cn/xwzx/zytz";
+	private static String urlPath = "http://xsc.nuc.edu.cn/xwzx/xyxw.htm";
+	private String urlNextPath = "http://xsc.nuc.edu.cn/xwzx/xyxw";
 	private String urlContentPath = "http://xsc.nuc.edu.cn";
 	private String currUrlPath;
+	
+	private static String sqlTableName = "hongtai_school_notice";
 	
 	private static Set<NoticeBean> noticeSet ;
 	
@@ -120,7 +122,7 @@ private String getIndexFromString(String str) {
 			count++;
 		}
 		System.out.println("共计：" + count);
-		boolean isSuccess = noticeBiz.insertNewsData(noticeList);
+		boolean isSuccess = noticeBiz.insertNewsData(noticeList,sqlTableName);
 		if (isSuccess) {
 			System.out.println("初始化数据成功！");
 		} else {

@@ -21,7 +21,7 @@ public class NoticeDaoImpl implements NoticeDao {
 	public static final int ROWS_PRE_PAGE = 15;
 	
 	@Override
-	public boolean insertNewsData(List<NoticeBean> noticeList) throws Exception {
+	public boolean insertNewsData(List<NoticeBean> noticeList,String sqlTableName) throws Exception {
 		
 		boolean result = false;
 		Connection connection = dbUtil.getConnection();
@@ -31,7 +31,7 @@ public class NoticeDaoImpl implements NoticeDao {
 		format.setTimeZone(t);
 		Long startTime = System.currentTimeMillis();
 		connection.setAutoCommit(false);
-		String sql = "insert into hongtai_important_notice (title,time,url) value (?,?,?)";
+		String sql = "insert into " + sqlTableName + " (title,time,url) value (?,?,?)";
 		preparedStatement = connection.prepareStatement(sql);
 		for (NoticeBean noticeBean : noticeList) {
 			preparedStatement.setString(1, noticeBean.getTitle());
@@ -71,10 +71,10 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 
 	@Override
-	public List<NoticeBean> fetchNoticeByPageNO(int pageNo) throws Exception {
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo,String sqlTableName) throws Exception {
 		List<NoticeBean> noticeBeanList = null;
 		Connection connection = dbUtil.getConnection();
-		String sql = "select * from hongtai_important_notice order by id desc limit ?,?";
+		String sql = "select * from " + sqlTableName + " order by id desc limit ?,?";
 		preparedStatement = connection.prepareStatement(sql);
 		int startIndex = (pageNo - 1) * ROWS_PRE_PAGE;
 		preparedStatement.setInt(1, startIndex);
@@ -94,10 +94,10 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 
 	@Override
-	public int fetchNoticeRows() throws Exception {
+	public int fetchNoticeRows(String sqlTableName) throws Exception {
 		int count = 0;
 		Connection connection = dbUtil.getConnection();
-		String sql = "select count(*) from hongtai_important_notice";
+		String sql = "select count(*) from " + sqlTableName;
 		preparedStatement = connection.prepareStatement(sql);
 		resultSet = preparedStatement.executeQuery();
 		if(resultSet.next()) {

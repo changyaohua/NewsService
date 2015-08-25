@@ -57,10 +57,12 @@ public class UpdateFetchNoticeServlet extends HttpServlet {
 					newAddNotice.add(noticeBean);
 				}
 			}
+			String sqlTableName = (String)request.getAttribute("sqlTableName");
+			List<NoticeBean> noticeBeanList = noticeBiz.fetchNoticeByPageNO(1,sqlTableName);
 			
 	        //将新更新的写回数据库中
 	        Collections.reverse(newAddNotice);
-	        boolean isSuccess = noticeBiz.insertNewsData(newAddNotice);
+	        boolean isSuccess = noticeBiz.insertNewsData(newAddNotice,sqlTableName);
 			if (isSuccess) {
 				System.out.println("新增数据成功！");
 			} else {
@@ -68,7 +70,6 @@ public class UpdateFetchNoticeServlet extends HttpServlet {
 			}
 			
 			//将新更新的数据返回客户端
-			List<NoticeBean> noticeBeanList = noticeBiz.fetchNoticeByPageNO(1);
 			JSONArray jsonArray = JSONArray.fromObject(noticeBeanList);
 			System.out.println(jsonArray.toString());
 			response.getOutputStream().write(jsonArray.toString().getBytes("UTF-8"));  

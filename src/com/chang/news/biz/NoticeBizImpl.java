@@ -11,10 +11,10 @@ public class NoticeBizImpl implements NoticeBiz{
 	NoticeDao noticeDao = new NoticeDaoImpl();
 
 	@Override
-	public boolean insertNewsData(List<NoticeBean> noticeList) {
+	public boolean insertNewsData(List<NoticeBean> noticeList,String sqlTableName) {
 		boolean isSuccess = false;
 		try {
-			isSuccess = noticeDao.insertNewsData(noticeList);
+			isSuccess = noticeDao.insertNewsData(noticeList,sqlTableName);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -34,10 +34,10 @@ public class NoticeBizImpl implements NoticeBiz{
 	}
 
 	@Override
-	public List<NoticeBean> fetchNoticeByPageNO(int pageNo) {
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo,String sqlTableName) {
 		List<NoticeBean> noticeBeanList = null;
 		try {
-			noticeBeanList = noticeDao.fetchNoticeByPageNO(pageNo);
+			noticeBeanList = noticeDao.fetchNoticeByPageNO(pageNo,sqlTableName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -45,10 +45,10 @@ public class NoticeBizImpl implements NoticeBiz{
 	}
 
 	@Override
-	public int fetchNoticeRows() {
+	public int fetchNoticeRows(String sqlTableName) {
 		int count = 0;
 		try {
-			count  = noticeDao.fetchNoticeRows();
+			count  = noticeDao.fetchNoticeRows(sqlTableName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

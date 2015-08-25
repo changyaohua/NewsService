@@ -15,13 +15,13 @@ import com.chang.news.bean.NoticeBean;
  */
 public interface NoticeBiz {
 
-	public boolean insertNewsData(List<NoticeBean> noticeList);
+	public boolean insertNewsData(List<NoticeBean> noticeList,String sqlTableName);
 
 	public List<NoticeBean> fetchAllNotice();
 
-	public List<NoticeBean> fetchNoticeByPageNO(int pageNo);
+	public List<NoticeBean> fetchNoticeByPageNO(int pageNo, String sqlTableName);
 
-	public int fetchNoticeRows();
+	public int fetchNoticeRows(String sqlTableName);
 
 	public NoticeBean fetchFirstNotice();
 	
