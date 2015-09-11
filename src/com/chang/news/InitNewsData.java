@@ -26,17 +26,23 @@ import com.chang.news.biz.NoticeBizImpl;
  * @version v1.0
  *
  */
-public class initNewsData {
+public class InitNewsData {
 	
-	private static String urlPath = "http://xsc.nuc.edu.cn/xwzx/xyxw.htm";
-	private String urlNextPath = "http://xsc.nuc.edu.cn/xwzx/xyxw";
+	private static String urlPath = "http://xsc.nuc.edu.cn/rwxx/jzyg.htm";
+	private String urlNextPath = "http://xsc.nuc.edu.cn/rwxx/jzyg";
 	private String urlContentPath = "http://xsc.nuc.edu.cn";
 	private String currUrlPath;
 	
-	private static String sqlTableName = "hongtai_school_notice";
+	private static String sqlTableName = "hongtai_advance_notice";
 	
 	private static Set<NoticeBean> noticeSet ;
 	
+	/**
+	 * 用于最新消息，学院新闻，工作动态网页列表的解析
+	 * 
+	 * @param url  讲座预告的url
+	 * @return    封装解析到的网页信息的set集合
+	 */
 	public Set<NoticeBean> getDataFromWeb(String url) {
 		currUrlPath = url;
 		Document doc = null;
@@ -44,6 +50,7 @@ public class initNewsData {
 		try {
 			doc = Jsoup.connect(url).get();
 		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 		Document content = Jsoup.parse(doc.toString());
@@ -62,11 +69,46 @@ public class initNewsData {
 		return tempList;
 	}
 	
+	/**
+	 * 因为讲座预告的的解析与最新消息，学院新闻，工作动态不同，所以单另一个方法
+	 * 主要区别在获取信息的class宾浩不同c44536与c44514
+	 * 主要onload()的方法也得做出相应的调整
+	 * 
+	 * @param url  讲座预告的url
+	 * @return     封装解析到的网页信息的set集合
+	 */
+	public Set<NoticeBean> getAdvanceNoticeFromWeb(String url) {
+		currUrlPath = url;
+		Document doc = null;
+		Set<NoticeBean> tempList = new LinkedHashSet<NoticeBean>();
+		try {
+			doc = Jsoup.connect(url).get();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		Document content = Jsoup.parse(doc.toString());
+		Elements elements = content.getElementsByClass("c44536");
+		NoticeBean notice;
+		for (Element element : elements) {
+			notice = new NoticeBean();
+			notice.setTitle(element.text());
+			String time = element.parent().nextElementSibling().getElementsByClass("timestyle44536").text();
+			notice.setTime(time);
+			String contentUrl = urlContentPath
+					+ element.attr("href").replace("..", "");
+			notice.setUrl(contentUrl);
+			tempList.add(notice);
+		}
+		return tempList;
+	}
+	
 	public void onLoad() {
 		while (true) {
 			String nextUrl = getNextUrlPath(currUrlPath);
 			currUrlPath = urlNextPath + nextUrl;
 			Set<NoticeBean> mlist = getDataFromWeb(currUrlPath);
+//			Set<NoticeBean> mlist = getAdvanceNoticeFromWeb (currUrlPath);
 			if (mlist == null || nextUrl == null) {
 				break;
 			} else {
@@ -109,7 +151,7 @@ private String getIndexFromString(String str) {
 }
 	
 	public static void main(String[] args) {
-		initNewsData hongTaiNewsService = new initNewsData();
+		InitNewsData hongTaiNewsService = new InitNewsData();
 		NoticeBiz noticeBiz = new NoticeBizImpl();
 		noticeSet = hongTaiNewsService.getDataFromWeb(urlPath);
 		hongTaiNewsService.onLoad();

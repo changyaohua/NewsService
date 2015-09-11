@@ -17,5 +17,6 @@ public class ThreeNoticeServlet extends HongTaiNoticeServlet {
     protected void initSQLTableName() {
     	// TODO Auto-generated method stub
     	sqlTableName = "hongtai_school_notice";
+    	urlPath = "http://xsc.nuc.edu.cn/xwzx/xyxw.htm";
     }
 }

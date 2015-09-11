@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<jsp:forward page="./HongTaiNoticeServlet"></jsp:forward>
+	Hello World!
 </body>
 </html>

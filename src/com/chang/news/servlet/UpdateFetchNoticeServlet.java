@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-
-import com.chang.news.initNewsData;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.chang.news.InitNewsData;
 import com.chang.news.bean.NoticeBean;
 import com.chang.news.biz.NoticeBiz;
 import com.chang.news.biz.NoticeBizImpl;
@@ -39,8 +40,14 @@ public class UpdateFetchNoticeServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		NoticeBiz noticeBiz = new NoticeBizImpl();
-		String urlPath = "http://xsc.nuc.edu.cn/xwzx/zytz.htm";
-		Set<NoticeBean> noticeSet = new initNewsData().getDataFromWeb(urlPath);
+		Set<NoticeBean> noticeSet = null;
+		String urlPath = (String)request.getAttribute("urlPath");
+		
+		if ("http://xsc.nuc.edu.cn/rwxx/jzyg.htm".equals(urlPath)) {
+			noticeSet = new InitNewsData().getAdvanceNoticeFromWeb(urlPath);
+		} else {
+			noticeSet = new InitNewsData().getDataFromWeb(urlPath);
+		}
 		List<NoticeBean> newNoticeList = new ArrayList<NoticeBean>();
 		newNoticeList.addAll(noticeSet);
 		NoticeBean oldFirstNoticeBean = noticeBiz.fetchFirstNotice();
@@ -70,9 +77,9 @@ public class UpdateFetchNoticeServlet extends HttpServlet {
 			}
 			
 			//将新更新的数据返回客户端
-			JSONArray jsonArray = JSONArray.fromObject(noticeBeanList);
+			String jsonArray = JSON.toJSONString(noticeBeanList);
 			System.out.println(jsonArray.toString());
-			response.getOutputStream().write(jsonArray.toString().getBytes("UTF-8"));  
+			response.getOutputStream().write(jsonArray.getBytes("UTF-8"));  
 	        response.setContentType("text/json; charset=UTF-8");  //JSON的类型为text/json
 		}
 		

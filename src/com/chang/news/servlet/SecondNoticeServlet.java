@@ -17,5 +17,6 @@ public class SecondNoticeServlet extends HongTaiNoticeServlet {
     protected void initSQLTableName() {
     	// TODO Auto-generated method stub
     	sqlTableName = "hongtai_work_notice";
+    	urlPath = "http://xsc.nuc.edu.cn/xwzx/gzdt.htm";
     }
 }

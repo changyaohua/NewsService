@@ -22,14 +22,14 @@ public class DBUtil {
 	 *             与数据库进行连接发生的异常
 	 */
 	public Connection getConnection() throws Exception {
-		Connection conn = null;
-		String className = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://localhost:3306/test";
-		String user = "root";
-		String password = "root";
+		Connection connection = null;
+		String className="com.mysql.jdbc.Driver";
 		Class.forName(className).newInstance();
-		conn = DriverManager.getConnection(url, user, password);
-		return conn;
+		String url="jdbc:mysql://55e05a44118d8.sh.cdb.myqcloud.com:16778/HongTaiNews?useUnicode=true&characterEncoding=utf-8";
+		String username="cdb_outerroot";
+		String userpwd="mysql123";
+		connection  = DriverManager.getConnection(url, username, userpwd);
+		return connection;
 	}
 
 	/**

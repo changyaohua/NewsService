@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-
+import com.alibaba.fastjson.JSON;
 import com.chang.news.bean.NoticeBean;
 import com.chang.news.biz.NoticeBiz;
 import com.chang.news.biz.NoticeBizImpl;
@@ -23,18 +22,21 @@ import com.chang.news.dao.NoticeDaoImpl;
 public class HongTaiNoticeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	protected String sqlTableName;
+	protected String urlPath;
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void initSQLTableName(){
 		sqlTableName = "hongtai_important_notice";
+		urlPath = "http://xsc.nuc.edu.cn/xwzx/zytz.htm";
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		initSQLTableName();
 		int pageNo = Integer.parseInt(request.getParameter("pageNo"));
 		if(pageNo == -1){
 			request.setAttribute("sqlTableName", sqlTableName);
+			request.setAttribute("urlPath", urlPath);
 			request.getRequestDispatcher("./UpdateFetchNoticeServlet").forward(request, response);
 		} else {
 			NoticeBiz noticeBiz = new NoticeBizImpl();
@@ -42,9 +44,9 @@ public class HongTaiNoticeServlet extends HttpServlet {
 			int maxPage = allNoticeRow % NoticeDaoImpl.ROWS_PRE_PAGE == 0 ? allNoticeRow / NoticeDaoImpl.ROWS_PRE_PAGE : (allNoticeRow / NoticeDaoImpl.ROWS_PRE_PAGE + 1);
 			if (pageNo <= maxPage) {
 				List<NoticeBean> noticeBeanList = noticeBiz.fetchNoticeByPageNO(pageNo,sqlTableName);
-				JSONArray jsonArray = JSONArray.fromObject(noticeBeanList);
-				System.out.println(jsonArray.toString());
-				response.getOutputStream().write(jsonArray.toString().getBytes("UTF-8"));  
+				String jsonArray = JSON.toJSONString(noticeBeanList);
+				System.out.println(jsonArray);
+				response.getOutputStream().write(jsonArray.getBytes("UTF-8"));  
 		        response.setContentType("text/json; charset=UTF-8");  //JSON的类型为text/json
 			}
 		}
