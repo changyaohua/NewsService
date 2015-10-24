@@ -14,37 +14,19 @@ import com.chang.news.bean.NoticeBean;
 import com.chang.news.biz.NoticeBiz;
 import com.chang.news.biz.NoticeBizImpl;
 
-/**
- * Servlet implementation class FirstFetchNoticeServlet
- */
-@WebServlet("/UpdateFetchNoticeServlet")
-public class UpdateFetchNoticeServlet extends HttpServlet {
+@WebServlet("/TopNoticeServlet")
+public class TopNoticeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public UpdateFetchNoticeServlet() {
-		super();
-	}
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+
 		NoticeBiz noticeBiz = new NoticeBizImpl();
 
-		String sqlTableName = (String) request.getAttribute("sqlTableName");
-
-		// 将新更新的数据返回客户端
-		List<NoticeBean> noticeBeanList = noticeBiz.fetchNoticeByPageNO(1,
-				sqlTableName);
+		List<NoticeBean> noticeBeanList = noticeBiz.fetchTopNotice();
 		String jsonArray = JSON.toJSONString(noticeBeanList);
 		response.getOutputStream().write(jsonArray.getBytes("UTF-8"));
 		response.setContentType("text/json; charset=UTF-8"); // JSON的类型为text/json
-
 	}
 
 	/**
@@ -53,6 +35,7 @@ public class UpdateFetchNoticeServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+
 		doGet(request, response);
 	}
 

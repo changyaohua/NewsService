@@ -18,8 +18,8 @@ import com.chang.news.dao.NoticeDaoImpl;
 /**
  * Servlet implementation class HongTaiNoticeServlet
  */
-@WebServlet("/HongTaiNoticeServlet")
-public class HongTaiNoticeServlet extends HttpServlet {
+@WebServlet("/SchoolJobServlet")
+public class SchoolJobServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	protected String sqlTableName;
 	protected String urlPath;
@@ -28,8 +28,8 @@ public class HongTaiNoticeServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void initSQLTableName(){
-		sqlTableName = "hongtai_important_notice";
-		urlPath = "http://xsc.nuc.edu.cn/xwzx/zytz.htm";
+		sqlTableName = "hongtai_school_job";
+		urlPath = "http://csce.nuc.edu.cn/xs/jyxx.htm";
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		initSQLTableName();

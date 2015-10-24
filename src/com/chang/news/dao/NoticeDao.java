@@ -22,6 +22,8 @@ public interface NoticeDao {
 
 	public int fetchNoticeRows(String sqlTableName) throws Exception;
 
-	public NoticeBean fetchFirstNotice() throws Exception;
+	public NoticeBean fetchFirstNotice(String sqlTableName) throws Exception;
+
+	public List<NoticeBean> fetchTopNotice() throws Exception;
 
 }

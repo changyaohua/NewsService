@@ -56,14 +56,25 @@ public class NoticeBizImpl implements NoticeBiz{
 	}
 
 	@Override
-	public NoticeBean fetchFirstNotice() {
+	public NoticeBean fetchFirstNotice(String sqlTableName) {
 		NoticeBean noticeBean = null;
 		try {
-			noticeBean = noticeDao.fetchFirstNotice();
+			noticeBean = noticeDao.fetchFirstNotice(sqlTableName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return noticeBean;
+	}
+
+	@Override
+	public List<NoticeBean> fetchTopNotice() {
+		List<NoticeBean> noticeBeanList = null;
+		try {
+			noticeBeanList = noticeDao.fetchTopNotice();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return noticeBeanList;
 	}
 	
 }

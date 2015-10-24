@@ -23,6 +23,8 @@ public interface NoticeBiz {
 
 	public int fetchNoticeRows(String sqlTableName);
 
-	public NoticeBean fetchFirstNotice();
+	public NoticeBean fetchFirstNotice(String sqlTableName);
+
+	public List<NoticeBean> fetchTopNotice();
 	
 }

@@ -18,7 +18,7 @@ public class NoticeDaoImpl implements NoticeDao {
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	
-	public static final int ROWS_PRE_PAGE = 15;
+	public static final int ROWS_PRE_PAGE = 10;
 	
 	@Override
 	public boolean insertNewsData(List<NoticeBean> noticeList,String sqlTableName) throws Exception {
@@ -31,12 +31,13 @@ public class NoticeDaoImpl implements NoticeDao {
 		format.setTimeZone(t);
 		Long startTime = System.currentTimeMillis();
 		connection.setAutoCommit(false);
-		String sql = "insert into " + sqlTableName + " (title,time,url) value (?,?,?)";
+		String sql = "insert into " + sqlTableName + " (title,time,url,imgurl) value (?,?,?,?)";
 		preparedStatement = connection.prepareStatement(sql);
 		for (NoticeBean noticeBean : noticeList) {
 			preparedStatement.setString(1, noticeBean.getTitle());
 			preparedStatement.setString(2, noticeBean.getTime());
 			preparedStatement.setString(3, noticeBean.getUrl());
+			preparedStatement.setString(4, noticeBean.getImage());
 			preparedStatement.addBatch();
 		}
 		int[] count = preparedStatement.executeBatch();
@@ -64,6 +65,7 @@ public class NoticeDaoImpl implements NoticeDao {
 			noticeBean.setTitle(resultSet.getString("title"));
 			noticeBean.setTime(resultSet.getString("time"));
 			noticeBean.setUrl(resultSet.getString("url"));
+			noticeBean.setImage(resultSet.getString("imgurl"));
 			noticeBeanList.add(noticeBean);
 		}
 		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
@@ -87,6 +89,7 @@ public class NoticeDaoImpl implements NoticeDao {
 			noticeBean.setTitle(resultSet.getString("title"));
 			noticeBean.setTime(resultSet.getString("time"));
 			noticeBean.setUrl(resultSet.getString("url"));
+			noticeBean.setImage(resultSet.getString("imgurl"));
 			noticeBeanList.add(noticeBean);
 		}
 		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
@@ -108,10 +111,10 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 
 	@Override
-	public NoticeBean fetchFirstNotice() throws Exception {
+	public NoticeBean fetchFirstNotice(String sqlTableName) throws Exception {
 		NoticeBean noticeBean = null;
 		Connection connection = dbUtil.getConnection();
-		String sql = "select * from hongtai_important_notice order by id desc";
+		String sql = "select * from " + sqlTableName + " order by id desc";
 		preparedStatement = connection.prepareStatement(sql);
 		resultSet = preparedStatement.executeQuery();
 		while(resultSet.next()) {
@@ -119,10 +122,32 @@ public class NoticeDaoImpl implements NoticeDao {
 			noticeBean.setTitle(resultSet.getString("title"));
 			noticeBean.setTime(resultSet.getString("time"));
 			noticeBean.setUrl(resultSet.getString("url"));
+			noticeBean.setImage(resultSet.getString("imgurl"));
 			break;
 		}
 		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
 		return noticeBean;
+	}
+
+	@Override
+	public List<NoticeBean> fetchTopNotice() throws Exception {
+		List<NoticeBean> noticeBeanList = null;
+		Connection connection = dbUtil.getConnection();
+		String sql = "select * from hongtai_top_notice order by id desc limit 0,4";
+		preparedStatement = connection.prepareStatement(sql);
+		resultSet = preparedStatement.executeQuery();
+		noticeBeanList = new ArrayList<NoticeBean>();
+		NoticeBean noticeBean = null;
+		while(resultSet.next()){
+			noticeBean = new NoticeBean();
+			noticeBean.setTitle(resultSet.getString("title"));
+			noticeBean.setTime(resultSet.getString("time"));
+			noticeBean.setUrl(resultSet.getString("url"));
+			noticeBean.setImage(resultSet.getString("imgurl"));
+			noticeBeanList.add(noticeBean);
+		}
+		dbUtil.closeDBSourse(connection, preparedStatement, resultSet);
+		return noticeBeanList;
 	}
 
 }

@@ -8,6 +8,7 @@ public class NoticeBean implements Serializable {
 	private String title;
 	private String time;
 	private String url;
+	private String image;
 
 	public String getTitle() {
 		return title;
@@ -32,11 +33,20 @@ public class NoticeBean implements Serializable {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return title + "\t" + time + "\t" + url;
+		return title + "\t" + time + "\t" + url + "\t" + image;
 	}
 
 	@Override

@@ -26,101 +26,17 @@ import com.chang.news.biz.NoticeBizImpl;
  * @version v1.0
  *
  */
-public class InitNewsData {
+public class InitAdvanceNotice {
 	
-	private static String urlPath = "http://xsc.nuc.edu.cn/xwzx/gzdt.htm";
-	private String urlNextPath = "http://xsc.nuc.edu.cn/xwzx/gzdt";
+	private static String urlPath = "http://xsc.nuc.edu.cn/rwxx/jzyg.htm";
+	private String urlNextPath = "http://xsc.nuc.edu.cn/rwxx/jzyg";
 	private String urlContentPath = "http://xsc.nuc.edu.cn";
 	private String currUrlPath;
 	
-	private static String sqlTableName = "hongtai_work_notice";
+	private static String sqlTableName = "hongtai_advance_notice";
 	
 	private static Set<NoticeBean> noticeSet ;
 	
-	/**
-	 * 用于轮换图网页列表以及，学院新闻，工作动态的解析
-	 * 
-	 * @param url  轮换图的url
-	 * @return    封装解析到的网页信息的set集合
-	 */
-	public Set<NoticeBean> getDataWithImageFromWeb(String url) {
-		currUrlPath = url;
-		Document doc = null;
-		Set<NoticeBean> tempList = new LinkedHashSet<NoticeBean>();
-		try {
-			doc = Jsoup.connect(url).timeout(10000).get();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		Document content = Jsoup.parse(doc.toString());
-		Elements elements = content.getElementsByClass("c44514");
-		NoticeBean notice;
-		for (Element element : elements) {
-			notice = new NoticeBean();
-			notice.setTitle(element.text());
-			String time = element.parent().nextElementSibling().getElementsByClass("timestyle44514").text();
-			notice.setTime(time);
-			String contentUrl = urlContentPath
-					+ element.attr("href").replace("..", "");
-			notice.setUrl(contentUrl);
-			notice.setImage(fetchNoticeImage(contentUrl));
-			tempList.add(notice);
-		}
-		return tempList;
-	}
-	
-	private String fetchNoticeImage(String url){
-		Document doc = null;
-		try {
-			doc = Jsoup.connect(url).get();
-		} catch (IOException e) {
-			return "";
-		}
-		Document content = Jsoup.parse(doc.toString());
-		
-		String imageurl = "";
-		try {
-			Element element = content.getElementById("vsb_newscontent").select("img").first();
-			imageurl = element.attr("src").replace("../..", urlContentPath);
-		} catch (Exception e) {
-			return "";
-		}
-		
-		return imageurl;
-	}
-	
-	/**
-	 * 用于最新消息网页列表的解析
-	 * 
-	 * @param url  讲座预告的url
-	 * @return    封装解析到的网页信息的set集合
-	 */
-	public Set<NoticeBean> getDataFromWeb(String url) {
-		currUrlPath = url;
-		Document doc = null;
-		Set<NoticeBean> tempList = new LinkedHashSet<NoticeBean>();
-		try {
-			doc = Jsoup.connect(url).get();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		Document content = Jsoup.parse(doc.toString());
-		Elements elements = content.getElementsByClass("c44514");
-		NoticeBean notice;
-		for (Element element : elements) {
-			notice = new NoticeBean();
-			notice.setTitle(element.text());
-			String time = element.parent().nextElementSibling().getElementsByClass("timestyle44514").text();
-			notice.setTime(time);
-			String contentUrl = urlContentPath
-					+ element.attr("href").replace("..", "");
-			notice.setUrl(contentUrl);
-			tempList.add(notice);
-		}
-		return tempList;
-	}
 	
 	/**
 	 * 因为讲座预告的的解析与最新消息，学院新闻，工作动态不同，所以单另一个方法
@@ -151,7 +67,6 @@ public class InitNewsData {
 			String contentUrl = urlContentPath
 					+ element.attr("href").replace("..", "");
 			notice.setUrl(contentUrl);
-			notice.setImage(fetchNoticeImage(contentUrl));
 			tempList.add(notice);
 		}
 		return tempList;
@@ -161,9 +76,7 @@ public class InitNewsData {
 		while (true) {
 			String nextUrl = getNextUrlPath(currUrlPath);
 			currUrlPath = urlNextPath + nextUrl;
-//			Set<NoticeBean> mlist = getDataFromWeb(currUrlPath);
-//			Set<NoticeBean> mlist = getAdvanceNoticeFromWeb (currUrlPath);
-			Set<NoticeBean> mlist = getDataWithImageFromWeb (currUrlPath);
+			Set<NoticeBean> mlist = getAdvanceNoticeFromWeb (currUrlPath);
 			if (mlist == null || nextUrl == null) {
 				break;
 			} else {
@@ -206,10 +119,10 @@ private String getIndexFromString(String str) {
 }
 	
 	public static void main(String[] args) {
-		InitNewsData hongTaiNewsService = new InitNewsData();
+		InitAdvanceNotice initAdvanceNotice = new InitAdvanceNotice();
 		NoticeBiz noticeBiz = new NoticeBizImpl();
-		noticeSet = hongTaiNewsService.getDataWithImageFromWeb(urlPath);
-		hongTaiNewsService.onLoad();
+		noticeSet = initAdvanceNotice.getAdvanceNoticeFromWeb(urlPath);
+		initAdvanceNotice.onLoad();
 		int count = 0;
 		List<NoticeBean> noticeList = new ArrayList<NoticeBean>();
 		noticeList.addAll(noticeSet);
