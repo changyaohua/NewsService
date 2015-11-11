@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,7 +36,7 @@ public class InitNewsRuanJian {
 	private static Set<NoticeBean> noticeSet;
 
 	/**
-	 * 用于中北大学计算机工程学院就业信息网页列表的解析
+	 * 用于中北大学软件学院就业信息网页列表的解析
 	 * 
 	 * @param url
 	 *            校园新闻的url
@@ -64,10 +62,34 @@ public class InitNewsRuanJian {
 			notice.setTime(time);
 			String contentUrl = urlContentPath + element.child(1).attr("href");
 			notice.setUrl(contentUrl);
+			notice.setImage(fetchNoticeImage(contentUrl));
 			tempList.add(notice);
 
 		}
 		return tempList;
+	}
+	
+	private String fetchNoticeImage(String url){
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).get();
+		} catch (IOException e) {
+			return "";
+		}
+		Document content = Jsoup.parse(doc.toString());
+		
+		String imageurl = "";
+		try {
+			Element element = content.getElementsByClass("container_left_content").first().select("img").first();
+			imageurl = urlContentPath + element.attr("src").replaceFirst("/", "");
+			if (imageurl.length() > 120) {
+				imageurl = "";
+			}
+		} catch (Exception e) {
+			return "";
+		}
+		
+		return imageurl;
 	}
 
 	public void onLoad() {

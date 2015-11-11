@@ -36,17 +36,17 @@ public class AutoUpdateNoticeOperation{
 		noticeSet = initNewsData.getAdvanceNoticeFromWeb("http://xsc.nuc.edu.cn/rwxx/jzyg.htm");
 		updateDataBase(noticeSet,"hongtai_advance_notice");
 		
-//		noticeSet = new InitSchoolJob().getDataFromWeb("http://csce.nuc.edu.cn/xs/jyxx.htm");
-//		updateDataBase(noticeSet,"hongtai_school_job");
-//		
-//		noticeSet = new InitSchoolNews().getDataFromWeb("http://www.nuc.edu.cn/ejlb.jsp?urltype=tree.TreeTempUrl&wbtreeid=1106");
-//		updateDataBase(noticeSet,"hongtai_school_news");
-//		
-//		noticeSet = new InitNewsRuanJian().getDataFromWeb("http://csce.nuc.edu.cn/xs/xsdt.htm");
-//		updateDataBase(noticeSet,"hongtai_news_jisuanji");
-//		
-//		noticeSet = new InitNewsJiSuanJi().getDataFromWeb("http://ss.nuc.edu.cn/newDispatch.php");
-//		updateDataBase(noticeSet,"hongtai_news_ruanjian");
+		noticeSet = new InitSchoolJob().getDataFromWeb("http://csce.nuc.edu.cn/xs/jyxx.htm");
+		updateDataBase(noticeSet,"hongtai_school_job");
+		
+		noticeSet = new InitSchoolNews().getDataFromWeb("http://www.nuc.edu.cn/ejlb.jsp?urltype=tree.TreeTempUrl&wbtreeid=1106");
+		updateDataBase(noticeSet,"hongtai_school_news");
+		
+		noticeSet = new InitNewsRuanJian().getDataFromWeb("http://ss.nuc.edu.cn/newDispatch.php");
+		updateDataBase(noticeSet,"hongtai_news_ruanjian");
+		
+		noticeSet = new InitNewsJiSuanJi().getDataFromWeb("http://csce.nuc.edu.cn/xs/xsdt.htm");
+		updateDataBase(noticeSet,"hongtai_news_jisuanji");
 	}
 
 	private static void updateDataBase(Set<NoticeBean> noticeSet,String sqlTableName) {

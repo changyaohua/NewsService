@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,7 +16,6 @@ import com.chang.news.bean.NoticeBean;
 import com.chang.news.biz.NoticeBiz;
 import com.chang.news.biz.NoticeBizImpl;
 
-
 /**
  * 此类用于从解析网页并将数据加载到mysql数据库中
  * 
@@ -27,21 +24,22 @@ import com.chang.news.biz.NoticeBizImpl;
  *
  */
 public class InitSchoolNews {
-	
+
 	private static String urlPath = "http://www.nuc.edu.cn/ejlb.jsp?urltype=tree.TreeTempUrl&wbtreeid=1106";
 	private String urlNextPath = "http://www.nuc.edu.cn/ejlb.jsp";
 	private String urlContentPath = "http://www.nuc.edu.cn";
 	private String currUrlPath;
-	
+
 	private static String sqlTableName = "hongtai_school_news";
-	
-	private static Set<NoticeBean> noticeSet ;
-	
+
+	private static Set<NoticeBean> noticeSet;
+
 	/**
 	 * 用于中北大学校园新闻网页列表的解析
 	 * 
-	 * @param url  校园新闻的url
-	 * @return    封装解析到的网页信息的set集合
+	 * @param url
+	 *            校园新闻的url
+	 * @return 封装解析到的网页信息的set集合
 	 */
 	public Set<NoticeBean> getDataFromWeb(String url) {
 		currUrlPath = url;
@@ -59,16 +57,38 @@ public class InitSchoolNews {
 		for (Element element : elements) {
 			notice = new NoticeBean();
 			notice.setTitle(element.text());
-			String time = element.parent().nextElementSibling().getElementsByClass("timestyle1161").text();
+			String time = element.parent().nextElementSibling()
+					.getElementsByClass("timestyle1161").text();
 			notice.setTime(time);
-			String contentUrl = urlContentPath
-					+ element.attr("href");
+			String contentUrl = urlContentPath + element.attr("href");
 			notice.setUrl(contentUrl);
+			notice.setImage(fetchNoticeImage(contentUrl));
 			tempList.add(notice);
 		}
 		return tempList;
 	}
-	
+
+	private String fetchNoticeImage(String url) {
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).get();
+		} catch (IOException e) {
+			return "";
+		}
+		Document content = Jsoup.parse(doc.toString());
+
+		String imageurl = "";
+		try {
+			Element element = content.getElementById("vsb_newscontent")
+					.select("img").first();
+			imageurl = element.attr("src").replace("../..", urlContentPath);
+		} catch (Exception e) {
+			return "";
+		}
+
+		return imageurl;
+	}
+
 	public void onLoad() {
 		while (true) {
 			String nextUrl = getNextUrlPath(currUrlPath);
@@ -81,39 +101,28 @@ public class InitSchoolNews {
 			}
 		}
 
-				
 	}
 
-public String getNextUrlPath(String url) {
-	Document doc = null;
-	String nextUrlPath = null;
-	Document content = null;
-	try {
-		doc = Jsoup.connect(url).get();
-		content = Jsoup.parse(doc.toString());
-	} catch (Exception e) {
-		return null;
-	}
-	Elements elements = content.getElementsByClass("Next");
-	for (Element element : elements) {
-		if (element.text().equals("下页")) {
-			nextUrlPath = element.attr("href");
-			break;
+	public String getNextUrlPath(String url) {
+		Document doc = null;
+		String nextUrlPath = null;
+		Document content = null;
+		try {
+			doc = Jsoup.connect(url).get();
+			content = Jsoup.parse(doc.toString());
+		} catch (Exception e) {
+			return null;
 		}
+		Elements elements = content.getElementsByClass("Next");
+		for (Element element : elements) {
+			if (element.text().equals("下页")) {
+				nextUrlPath = element.attr("href");
+				break;
+			}
+		}
+		return nextUrlPath;
 	}
-	return nextUrlPath;
-}
 
-private String getIndexFromString(String str) {
-	String index = null;
-	Pattern p = Pattern.compile("(\\d+)");
-	Matcher m = p.matcher(str);
-	if (m.find()) {
-		index = m.group();
-	}
-	return index;
-}
-	
 	public static void main(String[] args) {
 		InitSchoolNews initSchoolNews = new InitSchoolNews();
 		NoticeBiz noticeBiz = new NoticeBizImpl();
@@ -128,7 +137,7 @@ private String getIndexFromString(String str) {
 			count++;
 		}
 		System.out.println("共计：" + count);
-		boolean isSuccess = noticeBiz.insertNewsData(noticeList,sqlTableName);
+		boolean isSuccess = noticeBiz.insertNewsData(noticeList, sqlTableName);
 		if (isSuccess) {
 			System.out.println("初始化数据成功！");
 		} else {
